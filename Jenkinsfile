@@ -7,12 +7,6 @@ pipeline {
 
     stages {
 
-        stage('Clone Repository') {
-            steps {
-                git 'https://github.com/vinay-perumalla/Selenium-Jenkins-Project.git'
-            }
-        }
-
         stage('Build') {
             steps {
                 bat 'mvn clean compile'
