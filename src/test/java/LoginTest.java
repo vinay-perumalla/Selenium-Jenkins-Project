@@ -1,3 +1,4 @@
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -13,6 +14,9 @@ public class LoginTest {
     @BeforeMethod
     public void setup() {
 
+        // Automatically downloads and configures ChromeDriver
+        WebDriverManager.chromedriver().setup();
+
         driver = new ChromeDriver();
 
         driver.manage().window().maximize();
@@ -20,67 +24,51 @@ public class LoginTest {
         driver.get("https://the-internet.herokuapp.com/login");
     }
 
-    @Test
+    @Test(priority = 1)
     public void validLoginTest() {
 
-        driver.findElement(By.id("username"))
-                .sendKeys("tomsmith");
+        driver.findElement(By.id("username")).sendKeys("tomsmith");
 
-        driver.findElement(By.id("password"))
-                .sendKeys("SuperSecretPassword!");
+        driver.findElement(By.id("password")).sendKeys("SuperSecretPassword!");
 
-        driver.findElement(By.cssSelector("button[type='submit']"))
-                .click();
+        driver.findElement(By.cssSelector("button[type='submit']")).click();
 
-        String successMessage =
-                driver.findElement(By.id("flash")).getText();
+        String successMessage = driver.findElement(By.id("flash")).getText();
 
-        Assert.assertTrue(
-                successMessage.contains("You logged into a secure area!")
-        );
+        Assert.assertTrue(successMessage.contains("You logged into a secure area!"));
 
-        Assert.assertTrue(
-                driver.getCurrentUrl().contains("/secure")
-        );
+        Assert.assertTrue(driver.getCurrentUrl().contains("/secure"));
     }
 
-    @Test
+    @Test(priority = 2)
     public void invalidLoginTest() {
 
-        driver.findElement(By.id("username"))
-                .sendKeys("wrongusername");
+        driver.findElement(By.id("username")).sendKeys("wrongusername");
 
-        driver.findElement(By.id("password"))
-                .sendKeys("wrongpassword");
+        driver.findElement(By.id("password")).sendKeys("wrongpassword");
 
-        driver.findElement(By.cssSelector("button[type='submit']"))
-                .click();
+        driver.findElement(By.cssSelector("button[type='submit']")).click();
 
-        String errorMessage =
-                driver.findElement(By.id("flash")).getText();
+        String errorMessage = driver.findElement(By.id("flash")).getText();
 
-        Assert.assertTrue(
-                errorMessage.contains("Your username is invalid!")
-        );
+        Assert.assertTrue(errorMessage.contains("Your username is invalid!"));
     }
 
-    @Test
+    @Test(priority = 3)
     public void emptyFieldsTest() {
 
-        driver.findElement(By.cssSelector("button[type='submit']"))
-                .click();
+        driver.findElement(By.cssSelector("button[type='submit']")).click();
 
-        String errorMessage =
-                driver.findElement(By.id("flash")).getText();
+        String errorMessage = driver.findElement(By.id("flash")).getText();
 
-        Assert.assertTrue(
-                errorMessage.contains("Your username is invalid!")
-        );
+        Assert.assertTrue(errorMessage.contains("Your username is invalid!"));
     }
 
     @AfterMethod
     public void tearDown() {
 
-        driver.quit();
+        if (driver != null) {
+            driver.quit();
+        }
     }
 }
